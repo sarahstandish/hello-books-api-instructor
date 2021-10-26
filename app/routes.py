@@ -38,8 +38,14 @@ def handle_books():
 
 @books_bp.route("/<book_id>", methods=["GET", "PUT", "DELETE"])
 def handle_book(book_id):
+    
+    try:
+        book_id = int(book_id)
+    except ValueError:
+        return "ID must be an integer", 400
 
     book = Book.query.get(book_id)
+
     if not book:
         return make_response(f"No book with id {book_id}.", 404)
 
