@@ -10,14 +10,15 @@ class Book(db.Model):
     author = db.relationship("Author", back_populates="books")
 
     def to_dict(self):
-        from .author import Author
+        # from .author import Author
 
-        author = Author.query.get(self.author_id)
+        # author = Author.query.get(self.author_id)
 
         return {
             "id": self.id,
             "title": self.title,
             "description": self.description,
             "author_id" : self.author_id,
-            "author": author.to_dict()
+            # "author": author.to_dict()
+            # "author": self.author.name
         }
