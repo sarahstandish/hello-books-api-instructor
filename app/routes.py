@@ -1,9 +1,11 @@
 from flask import Blueprint, json, jsonify, make_response, request
 from app import db
 from app.models.book import Book
+from app.models.author import Author
 
 # group all the routes together in a route with a single prefix of books
 books_bp = Blueprint("books", __name__, url_prefix="/books")
+authors_bp = Blueprint("authors", __name__, url_prefix="/authors")
 
 @books_bp.route("", methods=["POST", "GET"])
 def handle_books():
@@ -16,7 +18,8 @@ def handle_books():
 
         new_book = Book(
             title=request_body["title"],
-            description=request_body["description"]
+            description=request_body["description"],
+            author_id = request_body["author_id"]
         )
         db.session.add(new_book)
         db.session.commit()
@@ -74,3 +77,27 @@ def handle_book(book_id):
         db.session.delete(book)
         db.session.commit()
         return f"Book with id {book_id} deleted"
+
+@authors_bp.route("", methods=["POST", "GET"])
+def handle_authors():
+
+    if request.method == "POST":
+        request_body = request.get_json()
+
+        if "name" not in request_body:
+            return "Invalid request", 400 # returning implicitly as a tuple (I hope)
+
+        new_author = Author(
+            name=request_body["name"],
+        )
+        db.session.add(new_author)
+        db.session.commit()
+        return make_response(
+            new_author.to_dict(),
+            201
+        )
+    elif request.method == "GET":
+
+        authors = Author.query.all()
+
+        return jsonify([author.to_dict() for author in authors])
