@@ -101,3 +101,22 @@ def handle_authors():
         authors = Author.query.all()
 
         return jsonify([author.to_dict() for author in authors])
+
+@authors_bp.route("/<author_id>/books", methods=["GET", "POST"])
+def handle_author_books(author_id):
+
+    if request.method == "GET":
+        books = Book.query.filter_by(author_id=author_id)
+
+        return jsonify([book.to_dict() for book in books])
+
+    elif request.method == "POST":
+
+        request_body = request.get_json()
+        
+        new_book = Book(title=request_body["title"], description=request_body["description"], author_id=author_id)
+
+        db.session.add(new_book)
+        db.session.commit()
+
+        return new_book.to_dict(), 201

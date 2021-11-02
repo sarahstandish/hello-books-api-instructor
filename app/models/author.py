@@ -9,12 +9,9 @@ class Author(db.Model):
     books = relationship("Book", back_populates="author")
 
     def to_dict(self):
-        from .book import Book
-
-        books = Book.query.filter_by(author_id = self.id)
 
         return {
-            "id" : self.id,
+            "author id" : self.id,
             "name" : self.name,
-            "books" : [book.to_dict() for book in books]
+            "books" : [book.to_dict() for book in self.books]
         }
