@@ -7,7 +7,7 @@ class Book(db.Model):
     description = db.Column(db.String)
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'))
     author = db.relationship("Author", back_populates="books")
-    genres = db.relationship("Genre", secondary='bookgenre', back_populates="books")
+    genres = db.relationship("Genre", secondary='books_genres', back_populates="books")
 
     def to_dict(self):
 
@@ -15,5 +15,6 @@ class Book(db.Model):
             "book id": self.id,
             "title": self.title,
             "description": self.description,
-            "author": self.author.name if self.author_id else None
+            "author": self.author.name if self.author_id else None,
+            "genre(s)": [genre.to_dict() for genre in self.genres] if self.genres else None
         }

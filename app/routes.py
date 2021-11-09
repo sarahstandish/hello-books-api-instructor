@@ -21,7 +21,7 @@ def handle_books():
         new_book = Book(
             title=request_body["title"],
             description=request_body["description"],
-            author_id = request_body["author_id"]
+            author_id = request_body["author_id"] if "author_id" in request_body else None
         )
         db.session.add(new_book)
         db.session.commit()
