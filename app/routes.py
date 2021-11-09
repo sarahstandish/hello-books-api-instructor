@@ -2,10 +2,12 @@ from flask import Blueprint, json, jsonify, make_response, request
 from app import db
 from app.models.book import Book
 from app.models.author import Author
+from app.models.genre import Genre
 
 # group all the routes together in a route with a single prefix of books
 books_bp = Blueprint("books", __name__, url_prefix="/books")
 authors_bp = Blueprint("authors", __name__, url_prefix="/authors")
+genres_bp = Blueprint("genres", __name__, url_prefix="/genres")
 
 @books_bp.route("", methods=["POST", "GET"])
 def handle_books():
@@ -120,3 +122,27 @@ def handle_author_books(author_id):
         db.session.commit()
 
         return new_book.to_dict(), 201
+
+@genres_bp.route("", methods=["POST", "GET"])
+def handle_genres():
+
+    if request.method == "POST":
+        request_body = request.get_json()
+
+        if "name" not in request_body:
+            return "Invalid request", 400 # returning implicitly as a tuple (I hope)
+
+        new_genre = Genre(
+            name=request_body["name"],
+        )
+        db.session.add(new_genre)
+        db.session.commit()
+        return make_response(
+            new_genre.to_dict(),
+            201
+        )
+    elif request.method == "GET":
+
+        genres = Genre.query.all()
+
+        return jsonify([genre.to_dict() for genre in genres])
