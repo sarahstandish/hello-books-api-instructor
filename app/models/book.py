@@ -7,6 +7,7 @@ class Book(db.Model):
     description = db.Column(db.String)
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'))
     author = db.relationship("Author", back_populates="books")
+    genres = db.relationship("Genre", secondary='bookgenre', back_populates="books")
 
     def to_dict(self):
 
